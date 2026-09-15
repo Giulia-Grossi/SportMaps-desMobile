@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import "./Carrinho.css";
 
 // Substitua pelos caminhos reais das imagens dos seus produtos
-import capaceteImg from "../assets/capacete.jpg";
-import rodasImg from "../assets/rodas.jpg";
-import protecaoImg from "../assets/protecao.jpg";
+import capaceteImg from "../../assets/capacete.jpg";
+import rodasImg from "../../assets/rodas.jpg";
+import protecaoImg from "../../assets/protecao.jpg";
 
 interface Product {
   id: number;
