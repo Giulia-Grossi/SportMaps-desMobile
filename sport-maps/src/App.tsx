@@ -3,7 +3,6 @@ import "./pages/Home/Home"
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from "./pages/Home/Home";
 import Carrinho from './pages/Carrinho/Carrinho'
-import { Link } from 'react-router-dom';
 
 
 function App() {
