@@ -27,6 +27,11 @@ interface CartItemProps {
 // PRODUTOS
 // =========================================
 
+//const carrinho = JSON.parse(
+//  localStorage.getItem("sport-maps-cart") || "[]"
+//);
+
+
 const initialProducts: Product[] = [
   {
     id: 1,
