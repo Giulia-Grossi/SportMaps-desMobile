@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "./Carrinho.css";
 
 // Substitua pelos caminhos reais das imagens dos seus produtos
-// TODO: Adicionar as imagens e remover o comentário, substituindo pelo caminho de cada imagem
 import capaceteImg from "../assets/capacete.jpg";
 import rodasImg from "../assets/rodas.jpg";
 import protecaoImg from "../assets/protecao.jpg";
