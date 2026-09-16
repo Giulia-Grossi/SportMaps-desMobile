@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   FaArrowLeft,
@@ -17,6 +18,9 @@ import {
 } from "react-icons/fa";
 import { MdDirections, MdLocationOn } from "react-icons/md";
 import "./Detalhes.css";
+import capaceteImg from "../../assets/capacete.jpg";
+import rodasImg from "../../assets/rodas.jpg";
+import protecaoImg from "../../assets/protecao.jpg";
 
 interface Produto {
   id: number;
@@ -45,7 +49,7 @@ const produtos: Produto[] = [
     preco: 149.9,
     categoria: "Segurança",
     imagem:
-      "https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?auto=format&fit=crop&w=500&q=80",
+      capaceteImg,
   },
   {
     id: 2,
@@ -61,7 +65,7 @@ const produtos: Produto[] = [
     preco: 69.9,
     categoria: "Skate",
     imagem:
-      "https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?auto=format&fit=crop&w=500&q=80",
+      rodasImg,
   },
   {
     id: 4,
@@ -85,7 +89,7 @@ const produtos: Produto[] = [
     preco: 249.9,
     categoria: "Segurança",
     imagem:
-      "https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?auto=format&fit=crop&w=500&q=80",
+      protecaoImg,
   },
 ];
 
@@ -207,7 +211,7 @@ export default function Detalhes({ onVoltar }: DetalhesProps) {
             <div className="local-imagem-container">
               <img
                 className="local-imagem"
-                src="https://images.unsplash.com/photo-1572776685600-aca6cdb7f3f5?auto=format&fit=crop&w=1400&q=85"
+                src="https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?auto=format&fit=crop&w=300&q=80"
                 alt="Pista de Skate Vila Bocaina"
               />
 

@@ -4,16 +4,19 @@ export default function Home() {
     const [modalidade, setModalidade] = useState("Skate");
     
     const locais = [
-        {
-            modalidade: "Skate",
-            nome: "Pista de Skate Vila Bocaina",
-            distancia: "A 450 m de você",
-            cidade: "Mauá, SP",
-            nota: "4.8",
-            imagem:
-            "https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?auto=format&fit=crop&w=300&q=80",
-        },
     {
+      id: 1,
+        modalidade: "Skate",
+        nome: "Pista de Skate Vila Bocaina",
+        distancia: "A 450 m de você",
+        cidade: "Mauá, SP",
+        nota: "4.8",
+        imagem:
+        "https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?auto=format&fit=crop&w=300&q=80",
+
+    },
+    {
+      id: 2,
       modalidade: "Corrida",
       nome: "Parque Linear do Guaíba",
       distancia: "A 1.2 km de você",
@@ -21,6 +24,16 @@ export default function Home() {
       nota: "4.5",
       imagem:
       "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=300&q=80",
+    },
+    {
+      id: 3,
+      modalidade: "Patins",
+      nome: "Parque Mãe Bonifácio",
+      distancia: "A 1600 km de você",
+      cidade: "Cuiabá, MT",
+      nota: "4.5",
+      imagem:
+      "https://revistacenarium.com.br/wp-content/uploads/2024/04/parque-mae-bonifacia-cuiaba.jpeg",
     },
 ];
 

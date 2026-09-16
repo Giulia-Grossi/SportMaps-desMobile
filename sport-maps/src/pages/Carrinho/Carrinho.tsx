@@ -6,14 +6,13 @@ import capaceteImg from "../../assets/capacete.jpg";
 import rodasImg from "../../assets/rodas.jpg";
 import protecaoImg from "../../assets/protecao.jpg";
 
-interface Product {
+interface ProdutoCarrinho {
   id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  category: string;
-  recommended: string;
+  nome: string;
+  preco: number;
+  imagem: string;
+  categoria: string;
+  quantidade: number;
 }
 
 interface CartItemProps {
@@ -27,40 +26,40 @@ interface CartItemProps {
 // PRODUTOS
 // =========================================
 
-//const carrinho = JSON.parse(
-//  localStorage.getItem("sport-maps-cart") || "[]"
-//);
+const carrinho = JSON.parse(
+  localStorage.getItem("sport-maps-cart") || "[]"
+);
 
 
-const initialProducts: Product[] = [
-  {
-    id: 1,
-    name: "Capacete Pro Skate Black Neon",
-    price: 179.9,
-    quantity: 1,
-    image: capaceteImg,
-    category: "Para Pistas",
-    recommended: "Pista de Skate Vila Bocaina",
-  },
-  {
-    id: 2,
-    name: "Rodas Street 54mm 99A (Jogo c/ 4)",
-    price: 80.9,
-    quantity: 2,
-    image: rodasImg,
-    category: "Para Pistas",
-    recommended: "Pista de Skate Vila Bocaina",
-  },
-  {
-    id: 3,
-    name: "Kit de Proteção Completo (Joelheira/Cotoveleira/Wrist)",
-    price: 78.9,
-    quantity: 1,
-    image: protecaoImg,
-    category: "Para Pistas",
-    recommended: "Parque Linear do Guaputiba",
-  },
-];
+// const initialProducts: Product[] = [
+//   {
+//     id: 1,
+//     name: "Capacete Pro Skate Black Neon",
+//     price: 179.9,
+//     quantity: 1,
+//     image: capaceteImg,
+//     category: "Para Pistas",
+//     recommended: "Pista de Skate Vila Bocaina",
+//   },
+//   {
+//     id: 2,
+//     name: "Rodas Street 54mm 99A (Jogo c/ 4)",
+//     price: 80.9,
+//     quantity: 2,
+//     image: rodasImg,
+//     category: "Para Pistas",
+//     recommended: "Pista de Skate Vila Bocaina",
+//   },
+//   {
+//     id: 3,
+//     name: "Kit de Proteção Completo (Joelheira/Cotoveleira/Wrist)",
+//     price: 78.9,
+//     quantity: 1,
+//     image: protecaoImg,
+//     category: "Para Pistas",
+//     recommended: "Parque Linear do Guaputiba",
+//   },
+// ];
 
 // =========================================
 // FUNÇÕES
@@ -77,53 +76,86 @@ function formatPrice(value: number): string {
 // COMPONENTE PRINCIPAL
 // =========================================
 
+
+const CART_KEY = "sport-maps-cart";
+
+function carregarCarrinho(): ProdutoCarrinho[] {
+  try {
+    return JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+  } catch (error) {
+    console.error("Erro ao carregar carrinho:", error);
+    return [];
+  }
+}
+
 export default function Cart() {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] =
+    useState<ProdutoCarrinho[]>(carregarCarrinho());
+
   const [coupon, setCoupon] = useState("");
 
   const shipping = 15;
 
   const subtotal = products.reduce(
-    (total, product) => total + product.price * product.quantity,
+    (total, product) =>
+      total + product.preco * product.quantidade,
     0
   );
 
   const total = subtotal + shipping;
 
-  function increaseQuantity(id:number) {
-    setProducts((current) =>
-      current.map((product) =>
+  function increaseQuantity(id: number) {
+    setProducts((current) => {
+      const updated = current.map((product) =>
         product.id === id
-          ? { ...product, quantity: product.quantity + 1 }
+          ? {
+              ...product,
+              quantidade: product.quantidade + 1,
+            }
           : product
-      )
-    );
+      );
+
+      localStorage.setItem(CART_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new Event("cartUpdated"));
+
+      return updated;
+    });
   }
 
-  // =========================================
-  // QUANTIDADE
-  // =========================================
-
-
   function decreaseQuantity(id: number) {
-    setProducts((current) =>
-      current
-        .map((product) =>
-          product.id === id
-            ? {
-                ...product,
-                quantity: Math.max(1, product.quantity - 1),
-              }
-            : product
-        )
-    );
+    setProducts((current) => {
+      const updated = current.map((product) =>
+        product.id === id
+          ? {
+              ...product,
+              quantidade: Math.max(1, product.quantidade - 1),
+            }
+          : product
+      );
+
+      localStorage.setItem(CART_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new Event("cartUpdated"));
+
+      return updated;
+    });
   }
 
   function removeProduct(id: number) {
-    setProducts((current) =>
-      current.filter((product) => product.id !== id)
-    );
+    setProducts((current) => {
+      const updated = current.filter(
+        (product) => product.id !== id
+      );
+
+      localStorage.setItem(CART_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new Event("cartUpdated"));
+
+      return updated;
+    });
   }
+
+  
+    
+  
 
   // =========================================
   // RENDER

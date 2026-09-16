@@ -3,6 +3,7 @@ import "./pages/Home/Home"
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from "./pages/Home/Home";
 import Carrinho from './pages/Carrinho/Carrinho.tsx'
+import Detalhes from './pages/Detalhes/Detalhes.tsx'
 
 
 function App() {
@@ -29,23 +30,20 @@ function App() {
           </div>
 
           <nav className="nav">
-            <Link to = "/Home">
+            <Link to = "/">
               <div className="nav-item active">
                 <span>⌾</span>
                 Explorar
               </div>
             </Link>
 
-            <div className="nav-item">
-              <span>♡</span>
-              Favoritos
-            </div>
-
-            <div className="nav-item cart">
-              <span>🛒</span>
-              <small>3</small>
-              Carrinho
-            </div>
+            <Link to = "/Carrinho">
+              <div className="nav-item cart">
+                <span>🛒</span>
+                <small>3</small>
+                Carrinho
+              </div>
+            </Link>
 
             <div className="user">
               <div className="avatar">LP</div>
@@ -62,6 +60,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/Carrinho" element={<Carrinho />} />
+          <Route path="/Detalhes" element={<Detalhes />} />
         </Routes>
       </div>
     </BrowserRouter>
