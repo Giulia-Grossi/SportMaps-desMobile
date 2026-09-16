@@ -1,4 +1,4 @@
-
+import {locais} from "../Home/Home.tsx"
 import { useState } from "react";
 import {
   FaArrowLeft,
@@ -22,6 +22,12 @@ import capaceteImg from "../../assets/capacete.jpg";
 import rodasImg from "../../assets/rodas.jpg";
 import protecaoImg from "../../assets/protecao.jpg";
 
+
+interface DetalhesLocal {
+  params: Promise<{
+    id: string;
+  }>;
+}
 interface Produto {
   id: number;
   nome: string;
@@ -125,6 +131,25 @@ const abrirWaze = () => {
 export default function Detalhes({ onVoltar }: DetalhesProps) {
   const [adicionados, setAdicionados] = useState<number[]>([]);
 
+  const caminho = window.location.pathname;
+  const id = Number(caminho.split("/").pop());
+
+  const local = locais.find((item) => item.id === id);
+  console.log("URL:", caminho);
+  console.log("ID:", id);
+  console.log("LOCAL:", local);
+
+
+  if (!local){
+    return (
+      <main>
+        <h1>
+          Local não encontrado
+        </h1>
+      </main>
+    );
+  }
+
   const adicionarAoCarrinho = (produto: Produto) => {
     try {
       const carrinhoAtual = JSON.parse(
@@ -211,8 +236,8 @@ export default function Detalhes({ onVoltar }: DetalhesProps) {
             <div className="local-imagem-container">
               <img
                 className="local-imagem"
-                src="https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?auto=format&fit=crop&w=300&q=80"
-                alt="Pista de Skate Vila Bocaina"
+                src={local.imagem}
+                alt={local.nome}
               />
 
               <div className="imagem-overlay">
@@ -225,18 +250,17 @@ export default function Detalhes({ onVoltar }: DetalhesProps) {
 
             {/* TAGS */}
             <div className="tags-local">
-              <span className="tag tag-verde">Skate</span>
+              <span className="tag tag-verde"> {local.modalidade}</span>
               <span className="tag">Pública</span>
             </div>
 
             {/* TÍTULO */}
             <div className="titulo-local">
               <div>
-                <h1>Pista de Skate Vila Bocaina</h1>
-
+                <h1>{local.nome}</h1>
                 <div className="avaliacao-mobile">
                   <FaStar />
-                  <strong>4.8</strong>
+                  <strong>{local.nota}</strong>
                   <span>(24 avaliações)</span>
                 </div>
               </div>

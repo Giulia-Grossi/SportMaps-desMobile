@@ -16,7 +16,7 @@ interface ProdutoCarrinho {
 }
 
 interface CartItemProps {
-  product: Product;
+  product: ProdutoCarrinho;
   onIncrease: () => void;
   onDecrease: () => void;
   onRemove: () => void;
@@ -188,7 +188,6 @@ export default function Cart() {
           <div className="title-divider" />
 
           <div className="products-list">
-
             {products.map((product) => (
               <CartItem
                 key={product.id}
@@ -198,8 +197,9 @@ export default function Cart() {
                 onRemove={() => removeProduct(product.id)}
               />
             ))}
-
           </div>
+
+          
 
           {/* Garantia */}
           <div className="compatibility-box">
@@ -311,7 +311,7 @@ function CartItem({
   onDecrease,
   onRemove,
 }: CartItemProps) {
-  const productTotal = product.price * product.quantity;
+  const productTotal = product.preco * product.quantidade;
 
   return (
     <article className="cart-item">
@@ -319,8 +319,8 @@ function CartItem({
       {/* Imagem */}
       <div className="product-image-container">
         <img
-          src={product.image}
-          alt={product.name}
+          src={product.imagem}
+          alt={product.nome}
           className="product-image"
         />
       </div>
@@ -332,12 +332,12 @@ function CartItem({
 
         <div className="product-meta">
           <span className="category-badge">
-            {product.category}
+            {product.categoria}
           </span>
 
-          <span className="recommendation">
+          {/* <span className="recommendation">
             Recomendado p/: {product.recommended}
-          </span>
+          </span> */}
         </div>
 
       </div>
@@ -345,7 +345,7 @@ function CartItem({
       {/* Preço unitário */}
       <div className="unit-price">
         <span>Valor Unitário</span>
-        <strong>{formatPrice(product.price)}</strong>
+        <strong>{formatPrice(product.preco)}</strong>
       </div>
 
       {/* Quantidade */}
@@ -354,12 +354,12 @@ function CartItem({
         <button
           type="button"
           onClick={onDecrease}
-          disabled={product.quantity <= 1}
+          disabled={product.quantidade <= 1}
         >
           −
         </button>
 
-        <span>{product.quantity}</span>
+        <span>{product.quantidade}</span>
 
         <button
           type="button"
