@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Carrinho.css";
 
 // Substitua pelos caminhos reais das imagens dos seus produtos
-import capaceteImg from "../../assets/capacete.jpg";
-import rodasImg from "../../assets/rodas.jpg";
-import protecaoImg from "../../assets/protecao.jpg";
+//import capaceteImg from "../../assets/capacete.jpg";
+//import rodasImg from "../../assets/rodas.jpg";
+//import protecaoImg from "../../assets/protecao.jpg";
 
 interface ProdutoCarrinho {
   id: number;
@@ -25,10 +26,6 @@ interface CartItemProps {
 // =========================================
 // PRODUTOS
 // =========================================
-
-const carrinho = JSON.parse(
-  localStorage.getItem("sport-maps-cart") || "[]"
-);
 
 
 // const initialProducts: Product[] = [
@@ -89,16 +86,23 @@ function carregarCarrinho(): ProdutoCarrinho[] {
 }
 
 export default function Cart() {
+  const navigate = useNavigate();
+
   const [products, setProducts] =
     useState<ProdutoCarrinho[]>(carregarCarrinho());
 
   const [coupon, setCoupon] = useState("");
 
-  const shipping = 15;
+  const shipping = products.length > 0 ? 15 : 0;
 
   const subtotal = products.reduce(
     (total, product) =>
       total + product.preco * product.quantidade,
+    0
+  );
+
+  const quantidadeTotal = products.reduce(
+    (total, product) => total + product.quantidade,
     0
   );
 
@@ -109,9 +113,9 @@ export default function Cart() {
       const updated = current.map((product) =>
         product.id === id
           ? {
-              ...product,
-              quantidade: product.quantidade + 1,
-            }
+            ...product,
+            quantidade: product.quantidade + 1,
+          }
           : product
       );
 
@@ -127,9 +131,9 @@ export default function Cart() {
       const updated = current.map((product) =>
         product.id === id
           ? {
-              ...product,
-              quantidade: Math.max(1, product.quantidade - 1),
-            }
+            ...product,
+            quantidade: Math.max(1, product.quantidade - 1),
+          }
           : product
       );
 
@@ -153,9 +157,23 @@ export default function Cart() {
     });
   }
 
-  
-    
-  
+  function finalizarCompra() {
+    const usuario = localStorage.getItem("sport-maps-user");
+
+    if (!usuario) {
+      navigate("/Login", {
+        state: {
+          from: "/Carrinho",
+        },
+      });
+
+      return;
+    }
+
+    alert("Pagamento será implementado futuramente!");
+  }
+
+
 
   // =========================================
   // RENDER
@@ -175,7 +193,7 @@ export default function Cart() {
               <h1>Meu Carrinho</h1>
 
               <span className="saved-items">
-                {products.length} itens salvos
+                {quantidadeTotal} itens salvos
               </span>
             </div>
 
@@ -199,7 +217,7 @@ export default function Cart() {
             ))}
           </div>
 
-          
+
 
           {/* Garantia */}
           <div className="compatibility-box">
@@ -277,7 +295,11 @@ export default function Cart() {
           </div>
 
           {/* Checkout */}
-          <button className="checkout-button">
+          <button
+            className="checkout-button"
+            onClick={finalizarCompra}
+            disabled={products.length === 0}
+          >
             <span>♧</span>
             FINALIZAR COMPRA
           </button>
@@ -328,7 +350,7 @@ function CartItem({
       {/* Informações */}
       <div className="product-info">
 
-        <h3>{product.name}</h3>
+        <h3>{product.nome}</h3>
 
         <div className="product-meta">
           <span className="category-badge">
@@ -381,7 +403,7 @@ function CartItem({
         type="button"
         className="remove-button"
         onClick={onRemove}
-        aria-label={`Remover ${product.name}`}
+        aria-label={`Remover ${product.nome}`}
       >
         🗑
       </button>

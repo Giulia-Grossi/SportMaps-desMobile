@@ -26,7 +26,7 @@ input {
 ========================================= */
 
 .header {
-  height: 54px;
+  height: 64px;
   background: #15161d;
   border-bottom: 1px solid #282934;
 
@@ -42,10 +42,10 @@ input {
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 
   color: #00f5d4;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.3px;
 
@@ -53,17 +53,17 @@ input {
 }
 
 .logo-icon {
-  width: 21px;
-  height: 21px;
+  width: 30px;
+  height: 30px;
 
-  border: 2px solid #00e8ce;
-  border-radius: 6px;
+  border: 1px solid #00e8ce;
+  border-radius: 7px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 15px;
+  font-size: 20px;
   line-height: 1;
 }
 
@@ -126,10 +126,11 @@ input {
 
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 7px;
 
+  text-decoration: none;
   color: #777984;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 500;
 
   cursor: pointer;
@@ -159,6 +160,7 @@ input {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
 
   background: #555866;
   color: white;
@@ -167,54 +169,87 @@ input {
   font-size: 7px;
 }
 
-/* USER */
 
+/* CONTAINER DO USUÁRIO */
 .user {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
 
-  padding-left: 5px;
+  height: 48px;
+  padding-left: 16px;
+
 }
 
-.avatar {
-  width: 24px;
-  height: 24px;
+/* FOTO OU INICIAIS */
+.user .avatar {
+  width: 42px;
+  height: 42px;
 
+  min-width: 42px;
   border-radius: 50%;
-
-  background: linear-gradient(
-    135deg,
-    #16b8a1,
-    #f3c56c
-  );
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 7px;
-  font-weight: 800;
+  background-color: #e8edff;
+  color: #3157c8;
 
-  color: #15231f;
-  border: 1px solid #00e8cf;
+  font-size: 15px;
+  font-weight: 700;
+
+  overflow: hidden;
 }
 
+/* INFORMAÇÕES DO USUÁRIO */
 .user-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  justify-content: center;
+  align-items: flex-start;
+
+  gap: 7px;
+
+  min-width: 0;
+  text-decoration: none;
 }
 
+/* NOME */
 .user-info strong {
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 600;
-  color: #d8d9df;
+  line-height: 16px;
+
+  color: #1f2937;
+
+  white-space: nowrap;
 }
 
+/* CATEGORIA */
 .user-info span {
-  font-size: 7px;
-  color: #727580;
+  font-size: 11px;
+  line-height: 14px;
+
+  color: #6b7280;
+}
+
+/* BOTÃO SAIR */
+.user-info .logout-button {
+  border: none;
+  padding: 0;
+
+  background: transparent;
+  color: #6b7280;
+
+  font-size: 11px;
+  line-height: 14px;
+
+  cursor: pointer;
+}
+
+.user-info .logout-button:hover {
+  color: #dc2626;
 }
 
 /* =========================================

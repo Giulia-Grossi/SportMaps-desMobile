@@ -1,5 +1,6 @@
-import {locais} from "../Home/Home.tsx"
-import { useState } from "react";
+import { locais } from "../Home/Home.tsx"
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   FaArrowLeft,
   FaCheckCircle,
@@ -128,19 +129,122 @@ const abrirWaze = () => {
   );
 };
 
+function salvarProdutoNoCarrinho(produto: Produto) {
+  try {
+    const carrinhoAtual: (Produto & { quantidade: number })[] =
+      JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+
+    const produtoExistente = carrinhoAtual.find(
+      (item) => item.id === produto.id
+    );
+
+    let novoCarrinho;
+
+    if (produtoExistente) {
+      novoCarrinho = carrinhoAtual.map((item) =>
+        item.id === produto.id
+          ? {
+            ...item,
+            quantidade: item.quantidade + 1,
+          }
+          : item
+      );
+    } else {
+      novoCarrinho = [
+        ...carrinhoAtual,
+        {
+          ...produto,
+          quantidade: 1,
+        },
+      ];
+    }
+
+    localStorage.setItem(CART_KEY, JSON.stringify(novoCarrinho));
+
+    window.dispatchEvent(new Event("cartUpdated"));
+
+    return true;
+  } catch (error) {
+    console.error("Erro ao adicionar produto ao carrinho:", error);
+    return false;
+  }
+}
+
 export default function Detalhes({ onVoltar }: DetalhesProps) {
   const [adicionados, setAdicionados] = useState<number[]>([]);
+  
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const caminho = window.location.pathname;
-  const id = Number(caminho.split("/").pop());
+  const { id } = useParams<{ id: string }>();
 
-  const local = locais.find((item) => item.id === id);
-  console.log("URL:", caminho);
-  console.log("ID:", id);
-  console.log("LOCAL:", local);
+  const local = locais.find((item) => item.id === Number(id));
 
+  const adicionarAoCarrinho = (produto: Produto) => {
+    const usuario = localStorage.getItem("sport-maps-user");
 
-  if (!local){
+    // Usuário não autenticado
+    if (!usuario) {
+      sessionStorage.setItem(
+        "sport-maps-pending-product",
+        JSON.stringify(produto)
+      );
+
+      navigate("/Login", {
+        state: {
+          from: location.pathname,
+        },
+      });
+
+      return;
+    }
+
+    // Usuário autenticado
+    const sucesso = salvarProdutoNoCarrinho(produto);
+
+    if (!sucesso) return;
+
+    setAdicionados((estadoAtual) => {
+      if (estadoAtual.includes(produto.id)) {
+        return estadoAtual;
+      }
+
+      return [...estadoAtual, produto.id];
+    });
+
+    setTimeout(() => {
+      setAdicionados((estadoAtual) =>
+        estadoAtual.filter((id) => id !== produto.id)
+      );
+    }, 2000);
+  };
+
+  useEffect(() => {
+    const produtoPendente = sessionStorage.getItem(
+      "sport-maps-pending-product"
+    );
+
+    const usuario = localStorage.getItem("sport-maps-user");
+
+    if (produtoPendente && usuario) {
+      // Remove primeiro para evitar adicionar duas vezes
+      sessionStorage.removeItem("sport-maps-pending-product");
+
+      const produto: Produto = JSON.parse(produtoPendente);
+
+      const sucesso = salvarProdutoNoCarrinho(produto);
+
+      if (sucesso) {
+        setAdicionados((estadoAtual) =>
+          estadoAtual.includes(produto.id)
+            ? estadoAtual
+            : [...estadoAtual, produto.id]
+        );
+      }
+    }
+  }, []);
+
+  if (!local) {
     return (
       <main>
         <h1>
@@ -149,71 +253,6 @@ export default function Detalhes({ onVoltar }: DetalhesProps) {
       </main>
     );
   }
-
-  const adicionarAoCarrinho = (produto: Produto) => {
-    try {
-      const carrinhoAtual = JSON.parse(
-        localStorage.getItem(CART_KEY) || "[]"
-      );
-
-      /*
-       * Se o produto já existe no carrinho,
-       * aumenta apenas a quantidade.
-       */
-      const produtoExistente = carrinhoAtual.find(
-        (item: Produto & { quantidade: number }) => item.id === produto.id
-      );
-
-      let novoCarrinho;
-
-      if (produtoExistente) {
-        novoCarrinho = carrinhoAtual.map(
-          (item: Produto & { quantidade: number }) =>
-            item.id === produto.id
-              ? {
-                  ...item,
-                  quantidade: item.quantidade + 1,
-                }
-              : item
-        );
-      } else {
-        novoCarrinho = [
-          ...carrinhoAtual,
-          {
-            ...produto,
-            quantidade: 1,
-          },
-        ];
-      }
-
-      localStorage.setItem(CART_KEY, JSON.stringify(novoCarrinho));
-
-      /*
-       * Evento customizado para avisar outros componentes
-       * que o carrinho foi atualizado.
-       */
-      window.dispatchEvent(new Event("cartUpdated"));
-
-      setAdicionados((estadoAtual) => {
-        if (estadoAtual.includes(produto.id)) {
-          return estadoAtual;
-        }
-
-        return [...estadoAtual, produto.id];
-      });
-
-      /*
-       * Remove o feedback visual depois de 2 segundos.
-       */
-      setTimeout(() => {
-        setAdicionados((estadoAtual) =>
-          estadoAtual.filter((id) => id !== produto.id)
-        );
-      }, 2000);
-    } catch (error) {
-      console.error("Erro ao adicionar produto ao carrinho:", error);
-    }
-  };
 
   return (
     <main className="detalhes-page">
@@ -383,9 +422,8 @@ export default function Detalhes({ onVoltar }: DetalhesProps) {
                         </strong>
 
                         <button
-                          className={`btn-adicionar ${
-                            foiAdicionado ? "adicionado" : ""
-                          }`}
+                          className={`btn-adicionar ${foiAdicionado ? "adicionado" : ""
+                            }`}
                           onClick={() => adicionarAoCarrinho(produto)}
                         >
                           {foiAdicionado ? (
