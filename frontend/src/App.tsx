@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import "./App.css";
 
 type Sport = "Skate" | "Corrida" | "Patins" | "Basquete";
-type Page = "explore" | "cart" | "account";
+type Page = "explore" | "favorites" | "cart" | "account";
 type AuthMode = "login" | "register" | "forgot";
 
 type Place = {
@@ -114,10 +114,13 @@ function MapView({
       scrollWheelZoom
       className="map"
     >
+
       <TileLayer
-        attribution="&copy; OpenStreetMap contributors"
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; OpenStreetMap contributors &copy; CARTO'
+        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        subdomains="abcd"
       />
+
       <FlyToPlace place={selected} />
 
       {filtered.map((place) => (
@@ -143,6 +146,28 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Place | null>(places[0]);
   const [viewList, setViewList] = useState(false);
+  const [favorites, setFavorites] = useState<number[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("sportmaps-favorites") || "[]");
+    } catch {
+      return [];
+    }
+  });
+  useEffect(() => {
+    localStorage.setItem("sportmaps-favorites", JSON.stringify(favorites));
+  }, [favorites]);
+
+  const toggleFavorite = (id: number) => {
+    setFavorites((current) =>
+      current.includes(id)
+        ? current.filter((favorite) => favorite !== id)
+        : [...current, id]
+    );
+  };
+
+  const favoritePlaces = places.filter((place) =>
+    favorites.includes(place.id)
+  );
 
   const [cart, setCart] = useState<Record<number, number>>({
     1: 1,
@@ -167,6 +192,8 @@ export default function App() {
       ),
     [sport, query]
   );
+  const displayedPlaces =
+    page === "favorites" ? favoritePlaces : filtered;
 
   const count = Object.values(cart).reduce((sum, quantity) => sum + quantity, 0);
 
@@ -199,8 +226,11 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <button className="brand" onClick={() => navigate("explore")}>
-          <span className="brand-mark">⌖</span>
+        <button
+          className={page === "favorites" ? "active" : ""}
+          onClick={() => navigate("favorites")}
+        >
+          ♡<span>Favoritos</span>
           SPORT-MAPS
         </button>
 
@@ -224,7 +254,13 @@ export default function App() {
             Explorar
           </button>
 
-          <button onClick={() => navigate("explore")}>Favoritos</button>
+          <button
+            className={page === "favorites" ? "nav-active" : ""}
+            onClick={() => navigate("favorites")}
+          >
+            Favoritos
+            <span className="nav-count">{favorites.length}</span>
+          </button>
 
           <button
             className={page === "cart" ? "nav-active" : ""}
@@ -243,7 +279,7 @@ export default function App() {
         </nav>
       </header>
 
-      {page === "explore" && (
+      {(page === "explore" || page === "favorites") && (
         <main className="workspace">
           <aside className="sidebar">
             <div className="section-head">
@@ -270,9 +306,11 @@ export default function App() {
 
             <div className="list-heading">
               <div>
-                <h3>Locais próximos</h3>
-                <p>{filtered.length} espaços encontrados</p>
-              </div>
+                <h3>{page === "favorites" ? "Seus favoritos" : "Locais próximos"}</h3>
+                <p>
+                  {displayedPlaces.length}{" "}
+                  {page === "favorites" ? "favoritos" : "espaços encontrados"}
+                </p>              </div>
               <button
                 className="text-button"
                 onClick={() => setViewList(!viewList)}
@@ -282,12 +320,11 @@ export default function App() {
             </div>
 
             <div className="place-list">
-              {filtered.map((place) => (
+              {displayedPlaces.map((place) => (
                 <button
                   key={place.id}
-                  className={`place-card ${
-                    selected?.id === place.id ? "chosen" : ""
-                  }`}
+                  className={`place-card ${selected?.id === place.id ? "chosen" : ""
+                    }`}
                   onClick={() => setSelected(place)}
                 >
                   <div className={`place-thumb thumb-${place.sport.toLowerCase()}`}>
@@ -297,11 +334,21 @@ export default function App() {
                   <div className="place-copy">
                     <span className="place-tag">{place.sport}</span>
                     <strong>{place.name}</strong>
-                    <small>
-                      ⌖ {place.distance} · {place.city}
-                    </small>
+                    <small>⌖ {place.distance} · {place.city}</small>
                     <span className="rating">★ {place.rating.toFixed(1)}</span>
                   </div>
+
+                  <button
+                    className={`favorite-btn ${favorites.includes(place.id) ? "favorited" : ""
+                      }`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      toggleFavorite(place.id);
+                    }}
+                    title="Favoritar local"
+                  >
+                    {favorites.includes(place.id) ? "★" : "☆"}
+                  </button>
                 </button>
               ))}
 
@@ -469,20 +516,20 @@ export default function App() {
               {user
                 ? `Olá, ${user}!`
                 : authMode === "login"
-                ? "Bem-vindo de volta"
-                : authMode === "register"
-                ? "Criar conta"
-                : "Recuperar senha"}
+                  ? "Bem-vindo de volta"
+                  : authMode === "register"
+                    ? "Criar conta"
+                    : "Recuperar senha"}
             </h1>
 
             <p>
               {user
                 ? "Sua conta está conectada neste navegador."
                 : authMode === "login"
-                ? "Entre para salvar seus locais favoritos."
-                : authMode === "register"
-                ? "Crie sua conta para aproveitar o SPORT-MAPS."
-                : "Informe seu e-mail para receber instruções."}
+                  ? "Entre para salvar seus locais favoritos."
+                  : authMode === "register"
+                    ? "Crie sua conta para aproveitar o SPORT-MAPS."
+                    : "Informe seu e-mail para receber instruções."}
             </p>
 
             {user ? (
@@ -556,8 +603,8 @@ export default function App() {
                   {authMode === "login"
                     ? "Entrar"
                     : authMode === "register"
-                    ? "Criar conta"
-                    : "Enviar instruções"}
+                      ? "Criar conta"
+                      : "Enviar instruções"}
                 </button>
               </form>
             )}
